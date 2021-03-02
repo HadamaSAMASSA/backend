@@ -1,43 +1,117 @@
 const express = require('express');
 const app = express();
-
 const port = 8000;
 
-const authorsId = [];
-const notAuthorsId = [];
+const authorsList = [
+    {
+      authors: {
+        name: "Lawrence Nowell",
+        nationality: "UK",
+      },
+      books: {
+        books: "Beowulf",
+      },
+    },
+    {
+      authors: {
+        name: "William Shakespeare",
+        nationality: "UK",
+      },
+      books: {
+        books: "Hamlet, Othello, Romeo and Juliet, MacBeth",
+      },
+    },
+    {
+      authors: {
+        name: "Charles Dickens",
+        nationality: "US",
+      },
+      books: {
+        books: "Oliver Twist, A Christmas Carol",
+      },
+    },
+    {
+      authors: {
+        name: "Oscar Wilde",
+        nationality: "UK",
+      },
+      books: {
+        books: "The Picture of Dorian Gray, The Importance of Being Earnest",
+      },
+    },
+  ];
+  
+console.log(authorsList[1].books)
+app.listen(port, () => {
+    console.log('Server started on port: ' + port);
+      });
 
 app.get('/', (req, res) => {
     res.send('Authors API');
   });
 
-for(let i = 0; i < 10; i ++) {
-    authorsId + i;
-}
-if(authorsId == 1){
-    app.get(`/authors/${authorsId}`, (req, res) => {
+  app.get("/authors/1", (req, res) => {
     res.send('Lawrence Nowell, UK');
-  })
-}else if(authorsId == 2){
-    app.get(`/authors/${authorsId}`, (req, res) => {
-        res.send('William Shakespeare, UK');
-      })
-}else if(authorsId == 3){
-    app.get(`/authors/${authorsId}`, (req, res) => {
-        res.send('Charles Dickens, US');
-      })
-}else if(authorsId == 4){
-    app.get(`/authors/${authorsId}`, (req, res) => {
-        res.send('Oscar Wilde, UK');
-      })
-}/*else{
-    app.get("*", (req, res) => {
-        res.send(`The author with the ID ${notAuthorsId} does not exist`);
-}*/
+  });
+
+  app.get("/authors/2", (req, res) => {
+    res.send('William Shakespeare, UK');
+  });
 
 
+  app.get("/authors/:id", (req, res) => {
+    switch (req.params.id) {
+      case "1":
+        res.send("Lawrence Nowell, UK");
+        break;
+      case "2":
+        res.send("William Shakespeare, UK");
+        break;
+      case "3":
+        res.send("Charles Dickens, US");
+        break;
+      case "4":
+        res.send("Oscar Wilde, UK");
+        break;
+      default:
+        res.send(`the author with the ID ${req.params.id} does not exist`);
+    }
+  });
 
-  app.listen(port, () => {
-  console.log('Server started on port: ' + port);
+  app.get("/authors/:id/books", (req, res) => {
+    switch (req.params.id) {
+      case "1":
+        res.send("Beowulf");
+        break;
+      case "2":
+        res.send("Hamlet, Othello, Romeo and Juliet, MacBeth");
+        break;
+      case "3":
+        res.send("Oliver Twist, A Christmas Carol");
+        break;
+      case "4":
+        res.send("The Picture of Dorian Gray, The Importance of Being Earnest");
+        break;
+    }
+  });
+
+  app.get("/json/authors/:id", (req, res) => {
+    console.log(req.params.id);
+    if (Number.isInteger(parseInt(req.params.id))) {
+        if (parseInt(req.params.id) < authorsList.length) {
+            res.send(authorsList[req.params.id - 1].authors);
+        } else {
+            res.send(`the author with the ID ${req.params.id} does not exist`);
+        }
+    } else {
+        res.send("l'id doit être un nombre entier");
+    }
 });
 
-// JE SAIS QUE C4EST FAUX MAIS BON
+app.get("/json/authors/:id/books", (req, res) => {
+  res.send(authorsList[req.params.id - 1].books);
+});
+
+app.get("*", (req, res) => {
+  res.send("ERROR 404");
+});
