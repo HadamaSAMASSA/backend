@@ -5,7 +5,6 @@ const mongoose = require ("mongoose");
 const jwt = require("jsonwebtoken");
 const config = require("./config");
 const signUpModel = require ("./models/Signup");
-const adminModel = require("./models/Admin");
 
 const app = express();
 
@@ -109,10 +108,12 @@ app.get("/topsecret", async (req,res) => {
     const user = await signUpModel.findOne({
         _id: result.id
     }).exec()
+
     console.log(result);
-    res.send(`Bienvenue, ${user.firstName}`);
+
+    res.send([user.firstName, user.surname, user.dateOfBirth]);
+
     }catch(err){
         res.status(401).send("Unauthorized !");
-    }
-
-})
+    };
+});
